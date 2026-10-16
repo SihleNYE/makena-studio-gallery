@@ -16,7 +16,13 @@
   let current = null;
   let trigger = null;
   let previousOverflow = '';
-  function closeDetail() { if (modal.open) modal.close(); }
+  function closeDetail() {
+    if (!modal.open) return;
+    modal.close();
+    document.body.style.overflow = previousOverflow;
+    if (trigger) trigger.focus({preventScroll:true});
+  }
+  modal.addEventListener('cancel',event => { event.preventDefault(); closeDetail(); });
   function openDetail(index, source) {
     current = artworks[index];
     trigger = source;
@@ -47,10 +53,6 @@
   modal.addEventListener('click',e => {
     const box = modal.getBoundingClientRect();
     if (e.target === modal && (e.clientX < box.left || e.clientX > box.right || e.clientY < box.top || e.clientY > box.bottom)) closeDetail();
-  });
-  modal.addEventListener('close',() => {
-    document.body.style.overflow = previousOverflow;
-    if (trigger) trigger.focus({preventScroll:true});
   });
   addButton.addEventListener('click',() => {
     if (!current) return;
